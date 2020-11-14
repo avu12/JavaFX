@@ -34,13 +34,13 @@ public class Main extends Application implements EventHandler<ActionEvent> {
     Button finish;
     Button diceroller;
     Stage window;
-    ArrayList<Scene> scenelist;
+    ArrayList<CustomScene> scenelist;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         scenelist = new ArrayList<>();
         createStartScene(primaryStage);
-        loadScene(0,"Menu");
+        loadScene("Menu");
         //primaryStage.isResizable(false);
     }
 
@@ -61,44 +61,38 @@ public class Main extends Application implements EventHandler<ActionEvent> {
             GridPane.setConstraints(textField, 1, 0);
             GridPane.setConstraints(finish,2,0);
             layout2.getChildren().addAll(label1, textField, finish);
-
-            scenelist.add(new Scene(layout2, 300, 250));
-            loadScene(1,"test");
+            CustomScene c = new CustomScene();
+            c.scene = new Scene(layout2, 300, 250);
+            c.title = "test";
+            scenelist.add(c);
+            loadScene("test");
         }else if(actionEvent.getSource() == finish ){
             Platform.exit();
         }else if(actionEvent.getSource()== diceroller){
-            GridPane dicePane = new GridPane();
-            ImageView imageView = null;
-            Group group = null;
-            Scene scene = null;
-            ArrayList<Image> imagelist = new ArrayList<Image>();
-            for (int i=1;i<=2;i++){
-                try {
-                    Image image = new Image(new FileInputStream(i+".png"),50,50,true,true);
-                    imagelist.add(image);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
+            try {
+                createDiceScene();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
             }
-            Random r = new Random();
-            int index = r.nextInt(imagelist.size());
-            imageView = new ImageView(imagelist.get(index));
-            group = new Group(imageView);
-            scene = new Scene(group, 300, 250);
-            window.setScene(scene);
+            loadScene("dice");
         }
     }
 
-    public void loadScene(int id,String title){
-        window.setTitle(title);
-        window.setScene(scenelist.get(id));
-        window.show();
+    public void loadScene(String title){
+        for(int i=0;i<scenelist.size();i++){
+            if (scenelist.get(i).title == title){
+                window.setTitle(title);
+                window.setScene(scenelist.get(i).scene);
+                window.show();
+            }
+        }
+
     }
 
     public void createStartScene(Stage primaryStage) throws IOException {
         window = primaryStage;
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        window.setScene(new Scene(root, 300, 275));
+        window.setScene(new Scene(root, 450, 350));
         button = new Button();
         button.setText("Click me");
         diceroller = new Button();
@@ -108,7 +102,55 @@ public class Main extends Application implements EventHandler<ActionEvent> {
         GridPane startlayout = new GridPane();
         startlayout.add(button,0,0);
         startlayout.add(diceroller,1,0);
-        scenelist.add(new Scene(startlayout, 300, 250));
+        CustomScene c = new CustomScene();
+        c.scene = new Scene(startlayout, 450, 350);
+        c.title = "Menu";
+        scenelist.add(c);
+    }
+    public void  createDiceScene() throws FileNotFoundException {
+        ArrayList<Button> bl = new ArrayList<Button>();
+
+        GridPane dicePane = new GridPane();
+        Scene scene = null;
+        ArrayList<Image> imagelist = new ArrayList<Image>();
+        for (int i=1;i<=2;i++){
+            try {
+                Image image = new Image(new FileInputStream(i+".png"),50,50,true,true);
+                imagelist.add(image);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        Random r = new Random();
+        int index = r.nextInt(imagelist.size());
+        for(int i=0;i<6;i++){
+            ImageView bview = null;
+            Button b = new Button();
+            b.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    int posrandom = r.nextInt(2)+1;
+                    try {
+                        b.setGraphic(new ImageView(new Image(new FileInputStream(posrandom+".png"),50,50,true,true)));
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            int posrandom = r.nextInt(2)+1;
+            b.setGraphic(new ImageView(new Image(new FileInputStream(posrandom+".png"),50,50,true,true)));
+            bl.add(b);
+        }
+        for(int i=0;i<bl.size();i++){
+            dicePane.add(bl.get(i),i,0);
+        }
+
+
+        CustomScene c = new CustomScene();
+        //dicePane.add(group,0,0);
+        c.scene = new Scene(dicePane, 450, 350);
+        c.title = "dice";
+        scenelist.add(c);
     }
 }
 
