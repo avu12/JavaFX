@@ -5,18 +5,17 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.FileInputStream;
@@ -29,12 +28,12 @@ public class Main extends Application implements EventHandler<ActionEvent> {
     public static void main(String[] args) {
         launch(args);
     }
-
     Button button;
     Button finish;
     Button diceroller;
     Stage window;
     ArrayList<CustomScene> scenelist;
+    int howManyDice;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -68,13 +67,15 @@ public class Main extends Application implements EventHandler<ActionEvent> {
             loadScene("test");
         }else if(actionEvent.getSource() == finish ){
             Platform.exit();
-        }else if(actionEvent.getSource()== diceroller){
+        }else if(actionEvent.getSource()== diceroller) {
             try {
+                howManyDice=3;
                 createDiceScene();
+                loadScene("dice");
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-            loadScene("dice");
+
         }
     }
 
@@ -107,10 +108,51 @@ public class Main extends Application implements EventHandler<ActionEvent> {
         c.title = "Menu";
         scenelist.add(c);
     }
-    public void  createDiceScene() throws FileNotFoundException {
+    public void createDiceScene() throws FileNotFoundException {
+        scenelist.add(DiceScene());
+    }
+    public CustomScene  DiceScene() throws FileNotFoundException {
+
+        Button rerollbutton;
+        rerollbutton = new Button();
+        rerollbutton.setText("Reroll");
+
         ArrayList<Button> bl = new ArrayList<Button>();
+        Spinner<Integer> intSpinner = new Spinner<Integer>();
+        SpinnerValueFactory<Integer> intSpinnerFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,5,3);
+        intSpinner.setValueFactory(intSpinnerFactory);
+        intSpinner.setEditable(true);
+
 
         GridPane dicePane = new GridPane();
+
+        ColumnConstraints col = new ColumnConstraints();
+        col.setMaxWidth(100);
+        col.setHalignment(HPos.LEFT);
+        col.setHgrow(Priority.ALWAYS);
+        rerollbutton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                howManyDice = intSpinnerFactory.getValue();
+                try {
+                    window.setScene(DiceScene().scene);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+
+        dicePane.getColumnConstraints().addAll(col,col,col,col,col,col);
+        dicePane.getChildren().add(intSpinner);
+        dicePane.add(rerollbutton,1,0);
+
+
+
+        //dicePane.setGridLinesVisible(true);
+
+
         Scene scene = null;
         ArrayList<Image> imagelist = new ArrayList<Image>();
         for (int i=1;i<=2;i++){
@@ -123,7 +165,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
         }
         Random r = new Random();
         int index = r.nextInt(imagelist.size());
-        for(int i=0;i<6;i++){
+        for(int i=0;i<howManyDice;i++){
             ImageView bview = null;
             Button b = new Button();
             b.setOnAction(new EventHandler<ActionEvent>() {
@@ -142,7 +184,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
             bl.add(b);
         }
         for(int i=0;i<bl.size();i++){
-            dicePane.add(bl.get(i),i,0);
+            dicePane.add(bl.get(i),i,1);
         }
 
 
@@ -150,7 +192,14 @@ public class Main extends Application implements EventHandler<ActionEvent> {
         //dicePane.add(group,0,0);
         c.scene = new Scene(dicePane, 450, 350);
         c.title = "dice";
-        scenelist.add(c);
+        //scenelist.add(c);
+        return c;
+
     }
+
+
+
+
 }
+
 
