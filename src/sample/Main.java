@@ -7,9 +7,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.VPos;
-import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -156,12 +153,8 @@ public class Main extends Application implements EventHandler<ActionEvent> {
         Scene scene = null;
         ArrayList<Image> imagelist = new ArrayList<Image>();
         for (int i=1;i<=6;i++){
-            try {
-                Image image = new Image(new FileInputStream(i+".png"),50,50,true,true);
-                imagelist.add(image);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+            Image image = new Image(getClass().getResource("/res/"+i+".png").toString(),50,50,true,true);
+            imagelist.add(image);
         }
         Random r = new Random();
         int index = r.nextInt(imagelist.size());
@@ -172,15 +165,11 @@ public class Main extends Application implements EventHandler<ActionEvent> {
                 @Override
                 public void handle(ActionEvent event) {
                     int posrandom = r.nextInt(6)+1;
-                    try {
-                        b.setGraphic(new ImageView(new Image(new FileInputStream(posrandom+".png"),50,50,true,true)));
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
+                    b.setGraphic(new ImageView(new Image(getClass().getResource("/res/"+posrandom+".png").toString(),50,50,true,true)));
                 }
             });
             int posrandom = r.nextInt(6)+1;
-            b.setGraphic(new ImageView(new Image(new FileInputStream(posrandom+".png"),50,50,true,true)));
+            b.setGraphic(new ImageView(new Image(getClass().getResource("/res/"+posrandom+".png").toString(),50,50,true,true)));
             bl.add(b);
         }
         for(int i=0;i<bl.size();i++){
