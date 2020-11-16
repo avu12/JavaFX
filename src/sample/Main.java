@@ -155,7 +155,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 
         Scene scene = null;
         ArrayList<Image> imagelist = new ArrayList<Image>();
-        for (int i=1;i<=2;i++){
+        for (int i=1;i<=6;i++){
             try {
                 Image image = new Image(new FileInputStream(i+".png"),50,50,true,true);
                 imagelist.add(image);
@@ -171,7 +171,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
             b.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    int posrandom = r.nextInt(2)+1;
+                    int posrandom = r.nextInt(6)+1;
                     try {
                         b.setGraphic(new ImageView(new Image(new FileInputStream(posrandom+".png"),50,50,true,true)));
                     } catch (FileNotFoundException e) {
@@ -179,7 +179,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
                     }
                 }
             });
-            int posrandom = r.nextInt(2)+1;
+            int posrandom = r.nextInt(6)+1;
             b.setGraphic(new ImageView(new Image(new FileInputStream(posrandom+".png"),50,50,true,true)));
             bl.add(b);
         }
